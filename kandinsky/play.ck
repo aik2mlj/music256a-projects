@@ -1,8 +1,8 @@
 @import "constant.ck"
 
 class Play {
-    0 => static int NONE;  // not played
-    1 => static int ACTIVE;   // playing
+    0 => static int NONE;   // not played
+    1 => static int ACTIVE; // playing
     0 => int state;
 
     fun void setColor(vec3 color) {}
@@ -45,7 +45,7 @@ public class LinePlay extends Play {
 
 public class CirclePlay extends Play {
     SinOsc m => SinOsc a => NRev rev => Pan2 pan => dac;
-    2 => a.sync;  // FM synth
+    2 => a.sync; // FM synth
 
     0.1 => rev.mix;
     0 => a.gain;
@@ -57,7 +57,7 @@ public class CirclePlay extends Play {
     fun setColor(vec3 color) {
         Color.rgb2hsv(color) => vec3 hsv;
         // map value(brightness) to pitch
-        Std.mtof(Math.map2(hsv.z, 0., 1., 30-12, 100-12)) => a.freq;
+        Std.mtof(Math.map2(hsv.z, 0., 1., 30 - 12, 100 - 12)) => a.freq;
         a.freq() / 1.618 => m.freq;
         // map saturation to loudness
         // Math.map2(hsv.y, 0., 1., .1, 1.2) => a.gain;
@@ -96,7 +96,7 @@ public class PlanePlay extends Play {
     fun setColor(vec3 color) {
         Color.rgb2hsv(color) => vec3 hsv;
         // map value(brightness) to pitch
-        Std.mtof(Math.map2(hsv.z, 0., 1., 30-12, 100-12)) => a.freq;
+        Std.mtof(Math.map2(hsv.z, 0., 1., 30 - 12, 100 - 12)) => a.freq;
         // map saturation to loudness
         // Math.map2(hsv.y, 0., 1., .1, 0.7) => a.gain;
     }

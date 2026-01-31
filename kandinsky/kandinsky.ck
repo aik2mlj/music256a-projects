@@ -15,10 +15,10 @@ Mouse mouse;
 spork ~ mouse.selfUpdate(); // start updating mouse position
 
 // Scene setup ================================================================
-GG.scene() @=> GScene @ scene;
+GG.scene() @=> GScene @scene;
 GG.windowed(1280, 720);
-GG.camera() @=> GCamera @ cam;
-cam.orthographic();  // Orthographic camera mode for 2D scene
+GG.camera() @=> GCamera @cam;
+cam.orthographic(); // Orthographic camera mode for 2D scene
 
 // light
 GG.scene().light() @=> GLight light;
@@ -41,7 +41,7 @@ C.HEIGHT_GLB => background.scaY;
 
 DrawEvent drawEvent;
 // polymorphism
-Draw @ draws[4];
+Draw @draws[4];
 LineDraw lineDraw(mouse, drawEvent) @=> draws[0];
 CircleDraw circleDraw(mouse, drawEvent) @=> draws[1];
 PlaneDraw planeDraw(mouse, drawEvent) @=> draws[2];
@@ -59,7 +59,7 @@ PlayLine playline(mouse, drawEvent) --> scene;
 spork ~ playline.play();
 
 
-fun void select_drawtool(Mouse @ m, Draw draws[], DrawEvent @ drawEvent) {
+fun void select_drawtool(Mouse @m, Draw draws[], DrawEvent @drawEvent) {
     while (true) {
         GG.nextFrame() => now;
         for (auto draw : draws) {

@@ -4,19 +4,15 @@
 // Various object class for painting ==========================================
 
 public class Shape extends GGen {
-    Shred @ animateShred;
+    Shred @animateShred;
 
     fun void stop() {
         // stop playing, useful when erasing shapes
     }
 
-    fun int touchX(float x, float speed) {
-        return false;
-    }
+    fun int touchX(float x, float speed) { return false; }
 
-    fun int touchY(float y, float speed) {
-        return false;
-    }
+    fun int touchY(float y, float speed) { return false; }
 
     fun float x2pan(float x, float speed) {
         // if (speed > 0)
@@ -33,9 +29,7 @@ public class Shape extends GGen {
         // TODO: specify play direction
     }
 
-    fun int isHovered(Mouse @ mouse) {
-        return false;
-    }
+    fun int isHovered(Mouse @mouse) { return false; }
 }
 
 public class Line extends Shape {
@@ -72,43 +66,32 @@ public class Line extends Shape {
             animateShred.exit();
     }
 
-    fun void updatePos(vec2 start, vec2 end) {
-        g.positions([start, end]);
-    }
+    fun void updatePos(vec2 start, vec2 end) { g.positions([start, end]); }
 
-    fun vec3 color() {
-        return g.color();
-    }
+    fun vec3 color() { return g.color(); }
 
     fun void color(vec3 c) {
         g.color(c);
         play.setColor(c);
     }
 
-    fun float width() {
-        return g.width();
-    }
+    fun float width() { return g.width(); }
 
-    fun void width(float w) {
-        g.width(w);
-    }
+    fun void width(float w) { g.width(w); }
 
-    fun float getX(float y) {
-        return (1./slope) * (y - start.y) + start.x;
-    }
+    fun float getX(float y) { return (1. / slope) * (y - start.y) + start.x; }
 
-    fun float getY(float x) {
-        return slope * (x - start.x) + start.y;
-    }
+    fun float getY(float x) { return slope * (x - start.x) + start.y; }
 
-    fun int isHovered(Mouse @ mouse) {
+    fun int isHovered(Mouse @mouse) {
         // transform mouse position to line coordinate
         mouse.pos.x - start.x => float x_tr;
         mouse.pos.y - start.y => float y_tr;
         x_tr * cos + y_tr * sin => float x_prime;
         -x_tr * sin + y_tr * cos => float y_prime;
 
-        return (0 <= x_prime && x_prime <= length && -width() / 2. <= y_prime && y_prime <= width() / 2.);
+        return (0 <= x_prime && x_prime <= length && -width() / 2. <= y_prime &&
+                y_prime <= width() / 2.);
     }
 
     fun void animate(float speed) {
@@ -117,7 +100,7 @@ public class Line extends Shape {
             GG.nextFrame() => now;
             (now - t0) / 1::second => float t;
             Math.sin(t * speed * 5) => float inc;
-            width0 + inc*0.02 => this.width;
+            width0 + inc * 0.02 => this.width;
             // @(color0.x+inc*0.1, color0.y+inc*0.1, color0.z+inc*0.1) => this.color;
         }
     }
@@ -175,9 +158,7 @@ public class Circle extends Shape {
         play.setColor(color);
     }
 
-    fun vec3 color() {
-        return mat.color();
-    }
+    fun vec3 color() { return mat.color(); }
 
     fun void color(vec3 c) {
         mat.color(c);
@@ -192,7 +173,7 @@ public class Circle extends Shape {
             animateShred.exit();
     }
 
-    fun int isHovered(Mouse @ mouse) {
+    fun int isHovered(Mouse @mouse) {
         mouse.pos - center => vec2 dd;
         return dd.x * dd.x + dd.y * dd.y <= r * r;
     }
@@ -203,7 +184,7 @@ public class Circle extends Shape {
             GG.nextFrame() => now;
             (now - t0) / 1::second => float t;
             Math.sin(t * speed * 5) => float inc;
-            sca0+inc*0.03 => this.sca;
+            sca0 + inc * 0.03 => this.sca;
             // @(color0.x+inc*0.1, color0.y+inc*0.1, color0.z+inc*0.1) => this.color;
         }
     }
@@ -215,7 +196,7 @@ public class Circle extends Shape {
             // Math.sqrt(r * r - (x - center.x) * (x - center.x)) => float amount;
             // fix stuttering
             (r - Math.fabs(x - center.x)) * 2 => float amount;
-            play.play(y2pan(center.y, speed), amount/C.HEIGHT);
+            play.play(y2pan(center.y, speed), amount / C.HEIGHT);
             return true;
         } else {
             stop();
@@ -230,7 +211,7 @@ public class Circle extends Shape {
             // Math.sqrt(r * r - (x - center.x) * (x - center.x)) => float amount;
             // fix stuttering
             (r - Math.fabs(y - center.y)) * 2 => float amount;
-            play.play(x2pan(center.x, speed), amount/C.HEIGHT);
+            play.play(x2pan(center.x, speed), amount / C.HEIGHT);
             return true;
         } else {
             stop();
@@ -282,16 +263,14 @@ public class Plane extends Shape {
             animateShred.exit();
     }
 
-    fun vec3 color() {
-        return mat.color();
-    }
+    fun vec3 color() { return mat.color(); }
 
     fun void color(vec3 c) {
         mat.color(c);
         play.setColor(c);
     }
 
-    fun int isHovered(Mouse @ mouse) {
+    fun int isHovered(Mouse @mouse) {
         scaX() / 2. => float halfWidth;
         scaY() / 2. => float halfHeight;
         return (mouse.pos.x > pos().x - halfWidth && mouse.pos.x < pos().x + halfWidth &&
@@ -304,7 +283,7 @@ public class Plane extends Shape {
             GG.nextFrame() => now;
             (now - t0) / 1::second => float t;
             Math.sin(t * speed * 5) => float inc;
-            @(sca0.x+inc*0.03, sca0.y+inc*0.03, sca0.z+inc*0.03) => this.sca;
+            @(sca0.x + inc * 0.03, sca0.y + inc * 0.03, sca0.z + inc * 0.03) => this.sca;
             // @(color0.x+inc*0.1, color0.y+inc*0.1, color0.z+inc*0.1) => this.color;
         }
     }
@@ -313,7 +292,7 @@ public class Plane extends Shape {
         if (x >= Math.min(start.x, end.x) && x <= Math.max(start.x, end.x)) {
             if (play.state == 0)
                 spork ~ animate(speed) @=> animateShred;
-            play.play(y2pan(this.posY(), speed), this.scaY()/C.HEIGHT);
+            play.play(y2pan(this.posY(), speed), this.scaY() / C.HEIGHT);
             return true;
         } else {
             stop();
@@ -325,7 +304,7 @@ public class Plane extends Shape {
         if (y >= Math.min(start.y, end.y) && y <= Math.max(start.y, end.y)) {
             if (play.state == 0)
                 spork ~ animate(speed) @=> animateShred;
-            play.play(x2pan(this.posX(), speed), this.scaX()/C.HEIGHT);
+            play.play(x2pan(this.posX(), speed), this.scaX() / C.HEIGHT);
             return true;
         } else {
             stop();

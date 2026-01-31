@@ -14,13 +14,9 @@ public class TPlane extends GGen {
         color => mat.color;
     }
 
-    fun vec3 color() {
-        return mat.color();
-    }
+    fun vec3 color() { return mat.color(); }
 
-    fun void color(vec3 c) {
-        mat.color(c);
-    }
+    fun void color(vec3 c) { mat.color(c); }
 }
 
 public class ColorPicker extends GGen {
@@ -31,15 +27,15 @@ public class ColorPicker extends GGen {
     // [Color.SKYBLUE, Color.BEIGE, Color.MAGENTA, Color.LIGHTGRAY] @=> vec3 presets[];
     // int idx;
 
-    Mouse @ mouse;
-    DrawEvent @ drawEvent;
+    Mouse @mouse;
+    DrawEvent @drawEvent;
 
-    fun ColorPicker(Mouse @ m, DrawEvent @ d) {
+    fun ColorPicker(Mouse @m, DrawEvent @d) {
         m @=> this.mouse;
         d @=> this.drawEvent;
 
         C.TOOLBAR_SIZE => g.sca;
-        @(icon_offset, C.DOWN_GLB+(C.TOOLBAR_PADDING+C.TOOLBAR_SIZE)/2, -1) => g.pos;
+        @(icon_offset, C.DOWN_GLB + (C.TOOLBAR_PADDING + C.TOOLBAR_SIZE) / 2, -1) => g.pos;
         nextColor();
     }
 
@@ -53,10 +49,10 @@ public class ColorPicker extends GGen {
     }
 
     fun int isHovered() {
-        g.scaWorld() => vec3 worldScale;  // get dimensions
+        g.scaWorld() => vec3 worldScale; // get dimensions
         worldScale.x / 2.0 => float halfWidth;
         worldScale.y / 2.0 => float halfHeight;
-        g.posWorld() => vec3 pos;   // get position
+        g.posWorld() => vec3 pos; // get position
 
         return (mouse.pos.x > pos.x - halfWidth && mouse.pos.x < pos.x + halfWidth &&
                 mouse.pos.y > pos.y - halfHeight && mouse.pos.y < pos.y + halfHeight);
@@ -73,16 +69,16 @@ public class ColorPicker extends GGen {
 }
 
 public class Draw extends GGen {
-    0 => static int NONE;  // not clicked
-    1 => static int ACTIVE;   // clicked
+    0 => static int NONE;   // not clicked
+    1 => static int ACTIVE; // clicked
     0 => int state;
 
-    Mouse @ mouse;
-    DrawEvent @ drawEvent;
+    Mouse @mouse;
+    DrawEvent @drawEvent;
 
     TPlane icon_bg --> this;
 
-    fun @construct(Mouse @ m, DrawEvent @ d) {
+    fun @construct(Mouse @m, DrawEvent @d) {
         m @=> this.mouse;
         d @=> this.drawEvent;
 
@@ -91,11 +87,11 @@ public class Draw extends GGen {
     }
 
     fun int isHovered() {
-        icon_bg @=> GGen @ g;
-        g.scaWorld() => vec3 worldScale;  // get dimensions
+        icon_bg @=> GGen @g;
+        g.scaWorld() => vec3 worldScale; // get dimensions
         worldScale.x / 2.0 => float halfWidth;
         worldScale.y / 2.0 => float halfHeight;
-        g.posWorld() => vec3 pos;   // get position
+        g.posWorld() => vec3 pos; // get position
 
         return (mouse.pos.x > pos.x - halfWidth && mouse.pos.x < pos.x + halfWidth &&
                 mouse.pos.y > pos.y - halfHeight && mouse.pos.y < pos.y + halfHeight);
@@ -118,7 +114,7 @@ public class Draw extends GGen {
     }
 
     // polymorphism placeholder
-    fun Shape@ createShape(vec2 start, vec2 end) {
+    fun Shape @createShape(vec2 start, vec2 end) {
         <<< "Warning: calling the default createShape, returning a null pointer!" >>>;
         return null;
     }
@@ -139,7 +135,7 @@ public class Draw extends GGen {
                 NONE => state;
                 this.mouse.pos => end;
 
-                createShape(start, end) @=> Shape @ shape;
+                createShape(start, end) @=> Shape @shape;
                 <<< "draw", drawEvent.length >>>;
                 shape @=> drawEvent.shapes[drawEvent.length++];
                 shape --> GG.scene();
@@ -152,18 +148,18 @@ public class LineDraw extends Draw {
     GLines icon --> this;
     -0.5 => float icon_offset;
 
-    fun @construct(Mouse @ m, DrawEvent @ d) {
+    fun @construct(Mouse @m, DrawEvent @d) {
         Draw(m, d);
 
         0.03 => icon.width;
         C.COLOR_ICON => icon.color;
-        [@(icon_offset-(C.TOOLBAR_SIZE-C.TOOLBAR_PADDING)/2, C.DOWN_GLB+C.TOOLBAR_PADDING),
-            @(icon_offset+(C.TOOLBAR_SIZE-C.TOOLBAR_PADDING)/2, C.DOWN_GLB+C.TOOLBAR_SIZE)] => icon.positions;
+        [@(icon_offset - (C.TOOLBAR_SIZE - C.TOOLBAR_PADDING) / 2, C.DOWN_GLB + C.TOOLBAR_PADDING),
+         @(icon_offset + (C.TOOLBAR_SIZE - C.TOOLBAR_PADDING) / 2, C.DOWN_GLB + C.TOOLBAR_SIZE)] => icon.positions;
 
-        @(icon_offset, C.DOWN_GLB+(C.TOOLBAR_PADDING+C.TOOLBAR_SIZE)/2, -1) => icon_bg.pos;
+        @(icon_offset, C.DOWN_GLB + (C.TOOLBAR_PADDING + C.TOOLBAR_SIZE) / 2, -1) => icon_bg.pos;
     }
 
-    fun Shape@ createShape(vec2 start, vec2 end) {
+    fun Shape @createShape(vec2 start, vec2 end) {
         // generate a new line
         return new Line(start, end, drawEvent.color, 0.1, drawEvent.depth);
     }
@@ -176,17 +172,17 @@ public class CircleDraw extends Draw {
     icon.mat(mat);
     0 => float icon_offset;
 
-    fun @construct(Mouse @ m, DrawEvent @ d) {
+    fun @construct(Mouse @m, DrawEvent @d) {
         Draw(m, d);
 
         C.COLOR_ICON => mat.color;
-        @(icon_offset, C.DOWN_GLB+(C.TOOLBAR_PADDING+C.TOOLBAR_SIZE)/2, 0) => icon.pos;
+        @(icon_offset, C.DOWN_GLB + (C.TOOLBAR_PADDING + C.TOOLBAR_SIZE) / 2, 0) => icon.pos;
         C.TOOLBAR_SIZE - C.TOOLBAR_PADDING => icon.sca;
 
-        @(icon_offset, C.DOWN_GLB+(C.TOOLBAR_PADDING+C.TOOLBAR_SIZE)/2, -1) => icon_bg.pos;
+        @(icon_offset, C.DOWN_GLB + (C.TOOLBAR_PADDING + C.TOOLBAR_SIZE) / 2, -1) => icon_bg.pos;
     }
 
-    fun Shape@ createShape(vec2 start, vec2 end) {
+    fun Shape @createShape(vec2 start, vec2 end) {
         (end - start) => vec2 r;
         Math.sqrt(r.x * r.x + r.y * r.y) => float radius;
 
@@ -199,17 +195,17 @@ public class PlaneDraw extends Draw {
     TPlane icon --> this;
     -1 => float icon_offset;
 
-    fun @construct(Mouse @ m, DrawEvent @ d) {
+    fun @construct(Mouse @m, DrawEvent @d) {
         Draw(m, d);
 
         C.COLOR_ICON => icon.color;
-        @(icon_offset, C.DOWN_GLB+(C.TOOLBAR_PADDING+C.TOOLBAR_SIZE)/2, 0) => icon.pos;
+        @(icon_offset, C.DOWN_GLB + (C.TOOLBAR_PADDING + C.TOOLBAR_SIZE) / 2, 0) => icon.pos;
         C.TOOLBAR_SIZE - C.TOOLBAR_PADDING => icon.sca;
 
-        @(icon_offset, C.DOWN_GLB+(C.TOOLBAR_PADDING+C.TOOLBAR_SIZE)/2, -1) => icon_bg.pos;
+        @(icon_offset, C.DOWN_GLB + (C.TOOLBAR_PADDING + C.TOOLBAR_SIZE) / 2, -1) => icon_bg.pos;
     }
 
-    fun Shape@ createShape(vec2 start, vec2 end) {
+    fun Shape @createShape(vec2 start, vec2 end) {
         // generate a new plane
         return new Plane(start, end, drawEvent.color, drawEvent.depth);
     }
@@ -220,19 +216,20 @@ public class Eraser extends Draw {
     GLines icon_1 --> this;
     1 => float icon_offset;
 
-    fun @construct(Mouse @ m, DrawEvent @ d) {
+    fun @construct(Mouse @m, DrawEvent @d) {
         Draw(m, d);
 
         0.08 => icon_0.width;
         0.08 => icon_1.width;
         C.COLOR_ICON => icon_0.color;
         C.COLOR_ICON => icon_1.color;
-        [@(icon_offset-(C.TOOLBAR_SIZE-C.TOOLBAR_PADDING)/2, C.DOWN_GLB+C.TOOLBAR_PADDING),
-            @(icon_offset+(C.TOOLBAR_SIZE-C.TOOLBAR_PADDING)/2, C.DOWN_GLB+C.TOOLBAR_SIZE)] => icon_0.positions;
-        [@(icon_offset-(C.TOOLBAR_SIZE-C.TOOLBAR_PADDING)/2, C.DOWN_GLB+C.TOOLBAR_SIZE),
-            @(icon_offset+(C.TOOLBAR_SIZE-C.TOOLBAR_PADDING)/2, C.DOWN_GLB+C.TOOLBAR_PADDING)] => icon_1.positions;
+        [@(icon_offset - (C.TOOLBAR_SIZE - C.TOOLBAR_PADDING) / 2, C.DOWN_GLB + C.TOOLBAR_PADDING),
+         @(icon_offset + (C.TOOLBAR_SIZE - C.TOOLBAR_PADDING) / 2, C.DOWN_GLB + C.TOOLBAR_SIZE)] => icon_0.positions;
+        [@(icon_offset - (C.TOOLBAR_SIZE - C.TOOLBAR_PADDING) / 2, C.DOWN_GLB + C.TOOLBAR_SIZE),
+         @(icon_offset + (C.TOOLBAR_SIZE - C.TOOLBAR_PADDING) / 2,
+           C.DOWN_GLB + C.TOOLBAR_PADDING)] => icon_1.positions;
 
-        @(icon_offset, C.DOWN_GLB+(C.TOOLBAR_PADDING+C.TOOLBAR_SIZE)/2, -1) => icon_bg.pos;
+        @(icon_offset, C.DOWN_GLB + (C.TOOLBAR_PADDING + C.TOOLBAR_SIZE) / 2, -1) => icon_bg.pos;
     }
 
     fun void draw() {
@@ -270,38 +267,32 @@ public class Eraser extends Draw {
 }
 
 public class DrawEvent extends Event {
-    0 => static int NONE;  // no drawtool selected
-    1 => static int ACTIVE;  // drawtool selected
+    0 => static int NONE;   // no drawtool selected
+    1 => static int ACTIVE; // drawtool selected
     0 => int state;
-    Draw @ draw;  // reference to the selected drawtool
-    vec3 color;  // selected color
-    -50 => float depth;  // current depth of the drawed object
+    Draw @draw;           // reference to the selected drawtool
+    vec3 color;           // selected color
+    -50 => float depth; // current depth of the drawed object
 
     // all the drawed shapes
-    Shape @ shapes[1000];
+    Shape @shapes[1000];
     0 => int length;
 
-    fun int isNone() {
-        return state == NONE;
-    }
+    fun int isNone() { return state == NONE; }
 
-    fun int isActive() {
-        return state == ACTIVE;
-    }
+    fun int isActive() { return state == ACTIVE; }
 
     fun void setNone() {
         NONE => this.state;
         null @=> draw;
     }
 
-    fun void setActive(Draw @ d) {
+    fun void setActive(Draw @d) {
         ACTIVE => this.state;
         d @=> draw;
     }
 
-    fun void incDepth() {
-        depth + 0.001 => depth;
-    }
+    fun void incDepth() { depth + 0.001 => depth; }
 
     fun int touchX(float x, float speed) {
         false => int touched;
@@ -333,10 +324,10 @@ public class PlayLine extends GGen {
     1 => static int Y_AXIS;
     0 => int axis;
 
-    Mouse @ mouse;
-    DrawEvent @ drawEvent;
+    Mouse @mouse;
+    DrawEvent @drawEvent;
 
-    fun PlayLine(Mouse @ m, DrawEvent @ d) {
+    fun PlayLine(Mouse @m, DrawEvent @d) {
         m @=> mouse;
         d @=> drawEvent;
     }
@@ -399,8 +390,6 @@ public class PlayLine extends GGen {
 
                 drawEvent.touchY(y, speed);
             }
-
         }
     }
 }
-

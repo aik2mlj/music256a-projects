@@ -10,22 +10,18 @@ public class PosEvent {
 
     float x;
     int type;
-    Box @ box;
+    Box @box;
 
-    fun int lessThan(PosEvent @ other) {
-        return this.x < other.x;
-    }
+    fun int lessThan(PosEvent @other) { return this.x < other.x; }
 }
 
 public class BinaryHeap {
     1000 => static int MAX;
-    PosEvent @ data[MAX];  // Internal storage for the heap
+    PosEvent @data[MAX]; // Internal storage for the heap
     0 => int size;
 
     // array manipulation
-    fun void _push_back(PosEvent @ value) {
-        value @=> data[size++];
-    }
+    fun void _push_back(PosEvent @value) { value @=> data[size++]; }
 
     fun void _pop_back() {
         if (size <= 0) {
@@ -35,7 +31,7 @@ public class BinaryHeap {
         size--;
     }
 
-    fun void _swap(PosEvent @ a, PosEvent @ b) {
+    fun void _swap(PosEvent @a, PosEvent @b) {
         PosEvent c;
         a.x => c.x;
         a.type => c.type;
@@ -51,23 +47,24 @@ public class BinaryHeap {
     }
 
     // Insert an element into the heap
-    fun void push(PosEvent @ value) {
-        _push_back(value);       // Add the new value at the end
-        heapifyUp(size - 1);  // Fix the heap property upwards
+    fun void push(PosEvent @value) {
+        _push_back(value);   // Add the new value at the end
+        heapifyUp(size - 1); // Fix the heap property upwards
         // <<< top().x >>>;
     }
 
     // Remove the maximum element from the heap
     fun void pop() {
-        if (size == 0) return;
+        if (size == 0)
+            return;
 
-        _swap(data[0], data[size - 1]);  // Swap the root with the last element
-        _pop_back();                  // Remove the last element
-        heapifyDown(0);                   // Fix the heap property downwards
+        _swap(data[0], data[size - 1]); // Swap the root with the last element
+        _pop_back();                    // Remove the last element
+        heapifyDown(0);                 // Fix the heap property downwards
     }
 
     // Get the maximum element in the heap
-    fun PosEvent @ top() {
+    fun PosEvent @top() {
         if (size == 0) {
             <<< "Heap is empty" >>>;
             me.exit();
@@ -76,16 +73,15 @@ public class BinaryHeap {
     }
 
     // Check if the heap is empty
-    fun int empty() {
-        return size == 0;
-    }
+    fun int empty() { return size == 0; }
 
 
     // Heapify up to restore the heap property
     fun void heapifyUp(int index) {
         while (index > 0) {
             (index - 1) / 2 => int parent;
-            if (data[parent].lessThan(data[index])) break;  // Heap property is satisfied
+            if (data[parent].lessThan(data[index]))
+                break; // Heap property is satisfied
 
             _swap(data[index], data[parent]);
             parent => index;
@@ -106,7 +102,8 @@ public class BinaryHeap {
                 right => largest;
             }
 
-            if (largest == index) break;
+            if (largest == index)
+                break;
 
             _swap(data[index], data[largest]);
             largest => index;
