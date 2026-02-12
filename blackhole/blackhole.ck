@@ -28,7 +28,7 @@ ShaderDesc shader_desc;
 me.dir() + "blackhole.wgsl" => shader_desc.vertexPath;
 me.dir() + "blackhole.wgsl" => shader_desc.fragmentPath;
 // default vertex layout (each vertex has a float3 position, float3 normal, float2 uv)
-[ VertexFormat.Float3, VertexFormat.Float3, VertexFormat.Float2 ] @=> shader_desc.vertexLayout; 
+[VertexFormat.Float3, VertexFormat.Float3, VertexFormat.Float2] @=> shader_desc.vertexLayout;
 
 // compile the shader
 Shader universe_shader(shader_desc);
@@ -81,7 +81,7 @@ adc => LPF lpf => NRev adc_rev => Gain adc_gain => dac;
 // .2 => delay.gain;
 
 0.1 => adc_rev.mix;
-0. => adc.gain;  // muted by default
+0. => adc.gain; // muted by default
 10000 => lpf.freq;
 
 0.1 => input.gain;
@@ -93,8 +93,7 @@ input => gi;
 3 => gi.op;
 0.999 => onepole.pole;
 
-fun void addVoice(dur offset, float midi, dur note_dur, dur loop_dur)
-{
+fun void addVoice(dur offset, float midi, dur note_dur, dur loop_dur) {
     NRev rev => Pan2 pan => dac;
     .50 => rev.mix;
 
@@ -111,25 +110,25 @@ fun void addVoice(dur offset, float midi, dur note_dur, dur loop_dur)
         Math.random2f(-0.6, 0.6) => pan.pan;
         mdl.noteOn(1);
         env.keyOn();
-        note_dur/2 => now;
+        note_dur / 2 => now;
         env.keyOff();
-        note_dur/2 => now;
+        note_dur / 2 => now;
         mdl.noteOff(1);
         (loop_dur - note_dur) => now;
     }
 }
 
-spork ~ addVoice(7::second + 0.0::second, 58+12, 7.7::second, 20.1::second); // C
-spork ~ addVoice(7::second + 1.9::second, 60+12, 7.1::second, 16.2::second); // Eb
-spork ~ addVoice(7::second + 6.5::second, 65+12, 8.5::second, 19.6::second); // F
-spork ~ addVoice(7::second + 6.7::second, 53+12, 9.1::second, 24.7::second); // low F
-spork ~ addVoice(7::second + 8.2::second, 68+12, 9.4::second, 17.8::second); // Ab
-spork ~ addVoice(7::second + 9.6::second, 56+12, 7.9::second, 21.3::second); // low Ab
-spork ~ addVoice(7::second + 15.0::second, 61+12, 9.2::second, 31.8::second); // Db
+spork ~ addVoice(7::second + 0.0::second, 58 + 12, 7.7::second, 20.1::second);  // C
+spork ~ addVoice(7::second + 1.9::second, 60 + 12, 7.1::second, 16.2::second);  // Eb
+spork ~ addVoice(7::second + 6.5::second, 65 + 12, 8.5::second, 19.6::second);  // F
+spork ~ addVoice(7::second + 6.7::second, 53 + 12, 9.1::second, 24.7::second);  // low F
+spork ~ addVoice(7::second + 8.2::second, 68 + 12, 9.4::second, 17.8::second);  // Ab
+spork ~ addVoice(7::second + 9.6::second, 56 + 12, 7.9::second, 21.3::second);  // low Ab
+spork ~ addVoice(7::second + 15.0::second, 61 + 12, 9.2::second, 31.8::second); // Db
 
 fun void bh_sound() {
     SinOsc m => SinOsc a => JCRev rev => Pan2 pan => dac;
-    2 => a.sync;  // FM synth
+    2 => a.sync; // FM synth
 
     0.1 => rev.mix;
     0 => a.gain;
@@ -144,14 +143,15 @@ fun void bh_sound() {
         pos.magnitude() => float dist;
         1.5 / (dist + 1.) => a.gain;
         Math.map2(dist, 0., 10., 30., 500.) => a.freq;
-        a.freq() / Math.random2f(1.1,9.) => m.freq;
+        a.freq() / Math.random2f(1.1, 9.) => m.freq;
         // Math.pow(radius, 10) => m.gain;
         Math.random2f(1, Math.pow(1. + radius, 8)) => m.gain;
 
         // pan
         Math.sin(-Math.atan2(pos.x, pos.z) - view_turn.x) => pan.pan;
     }
-} spork ~ bh_sound();
+}
+spork ~ bh_sound();
 
 fun void toggle_mic() {
     while (true) {
@@ -161,7 +161,8 @@ fun void toggle_mic() {
             1. - adc.gain() => adc.gain;
         }
     }
-} spork ~ toggle_mic();
+}
+spork ~ toggle_mic();
 
 // mouse ======================================================================
 
@@ -180,7 +181,8 @@ fun void mouse_move() {
             universe_mat.uniformFloat2(3, view_turn);
         }
     }
-} spork ~ mouse_move();
+}
+spork ~ mouse_move();
 
 // graphics ===================================================================
 
@@ -203,8 +205,7 @@ fun void brightness_change() {
         if (curr * 200 < 1.) {
             // 0.5 => adc_rev.gain;
             1. => disk_brightness;
-        }
-        else {
+        } else {
             // 1. => adc_rev.gain;
             curr * 200 => disk_brightness;
         }
@@ -215,7 +216,8 @@ fun void brightness_change() {
 
         curr => prev;
     }
-} spork ~ brightness_change();
+}
+spork ~ brightness_change();
 
 fun void color_change() {
     while (true) {
@@ -225,17 +227,20 @@ fun void color_change() {
         Color.hsv2rgb(@(hue, sat, 1.)) => disk_color;
         universe_mat.uniformFloat3(8, disk_color);
     }
-} spork ~ color_change();
+}
+spork ~ color_change();
 
 fun vec3 rotate(vec3 o, vec2 turn) {
-    @(o.x, Math.cos(turn.y)*o.y-Math.sin(turn.y)*o.z, Math.sin(turn.y)*o.y+Math.cos(turn.y)*o.z) => vec3 o1;
-    @(Math.cos(turn.x)*o1.x+Math.sin(turn.x)*o1.z, o1.y, -Math.sin(turn.x)*o1.x+Math.cos(turn.x)*o1.z) => vec3 o2;
+    @(o.x, Math.cos(turn.y) * o.y - Math.sin(turn.y) * o.z,
+      Math.sin(turn.y) * o.y + Math.cos(turn.y) * o.z) => vec3 o1;
+    @(Math.cos(turn.x) * o1.x + Math.sin(turn.x) * o1.z, o1.y,
+      -Math.sin(turn.x) * o1.x + Math.cos(turn.x) * o1.z) => vec3 o2;
     return o2;
 }
 
-fun float impulse( float k, float x ){
-    k*x => float h;
-    return h*Math.exp(1.0-h);
+fun float impulse(float k, float x) {
+    k * x => float h;
+    return h * Math.exp(1.0 - h);
 }
 
 fun void radius_pumping() {
@@ -244,7 +249,7 @@ fun void radius_pumping() {
     while (true) {
         GG.nextFrame() => now;
         if (UI.isKeyReleased(UI_Key.Enter)) {
-            Math.max(amount, (now - t0)/second) => amount;
+            Math.max(amount, (now - t0) / second) => amount;
             break;
         }
     }
@@ -264,7 +269,7 @@ while (true) {
     UI.setMouseCursor(UI_MouseCursor.None);
 
     // navigate in the space
-    @(0,0,0) => vec3 acc_no_rot;
+    @(0, 0, 0) => vec3 acc_no_rot;
     if (UI.isKeyPressed(UI_Key.A, true)) {
         GG.dt() -=> acc_no_rot.x;
     } else if (UI.isKeyPressed(UI_Key.D, true)) {
@@ -286,7 +291,7 @@ while (true) {
     }
     rotate(acc_no_rot, -1. * view_turn) => vec3 acc;
     acc +=> vel;
-    vel*ACC +=> pos;
+    vel * ACC +=> pos;
     universe_mat.uniformFloat3(1, pos);
 
     // black hole rotation
